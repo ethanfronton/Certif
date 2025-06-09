@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <title>Créer une place de parking</title>
+</head>
+<header>
+    <nav class="container">
+        <div class="logo">
+            <img src="../images/logo.png" alt="logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="/home">Acceuil</a></li>
+            <li><a href="/reservation">Mes réservations</a></li>
+            <li><a href="/home">Contact</a></li>
+        </ul>
+        <img src="../images/id.png" alt="id" id="toggleNavImg">
+        <div id="verticalNav" class="vertical-nav">
+                <a href="/identification">Identification</a>
+                <a href="/about">À propos</a>
+                <a href="/my-parky">Mes parky</a>
+                <a href="/mes-annonces">Mes annonces</a>
+        </div>
+        </div>
+    </nav>
+</header>
+<body>
+    <div class="container mt-5">
+        <h2>Ajouter une place de parking</h2>
+        <form id="createParkingForm">
+            <div class="mb-3">
+                <label for="titre" class="form-label">Titre</label>
+                <input type="text" class="form-control" id="titre" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" required>
+            </div>
+            <div class="mb-3">
+                <label for="adresse" class="form-label">Adresse</label>
+                <input type="text" class="form-control" id="adresse" required>
+            </div>
+            <div class="mb-3">
+                <label for="ville" class="form-label">Ville</label>
+                <input type="text" class="form-control" id="ville" required>
+            </div>
+            <div class="mb-3">
+                <label for="prix" class="form-label">Prix (€ par jour)</label>
+                <input type="number" class="form-control" id="prix" required>
+            </div>
+            <div class="mb-3">
+                <label for="imageUrl" class="form-label">Lien de l'image</label>
+                <input type="url" class="form-control" id="imageUrl" required>
+            </div>
+            <div class="mb-3">
+                <label for="duree" class="form-label">Durée de location en jours</label>
+                <input type="number" class="form-control" id="duree" required>
+            </div>
+            <input type="hidden" id="proprietaire_id" value=""> 
+            <button type="submit" class="btn btn-primary w-100">Créer</button>
+        </form>
+        <!-- <div id="annoncesContainer"></div>
+    </div> -->
+    <script src="../js/annonces.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const userId = localStorage.getItem("userId");
+        document.getElementById("proprietaire_id").value = userId;
+      });
+    </script>
+        <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/contact.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/resa.css" />
+    <title>Mes Réservations</title>
+  </head>
+  <body>
+    <header>
+      <nav class="container">
+        <div class="logo">
+          <img src="/images/logo.png" alt="logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="/home">Accueil</a></li>
+          <li><a href="/reservation" id="resaLink">Mes réservations</a></li>
+          <li><a href="/home">Contact</a></li>
+        </ul>
+        <img src="/images/id.png" alt="id" id="toggleNavImg" />
+        <div id="verticalNav" class="vertical-nav">
+          <a href="/identification">Identification</a>
+          <a href="/about">À propos</a>
+          <a href="/my-parky">Mes parky</a>
+          <a href="/mes-annonces">Mes annonces</a>
+          <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="main-resa">
+      <div class="content-resa">
+        <h2>Mes réservations</h2>
+        <div id="reservationsContainer"></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        const reservationsContainer = document.getElementById(
+          "reservationsContainer"
+        );
+        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
+
+        if (!userId || !token) {
+          reservationsContainer.innerHTML =
+            "<p>Vous devez être connecté pour voir vos réservations.</p>";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/reservations",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Erreur lors de la récupération des réservations");
+          }
+
+          const reservations = await response.json();
+          reservationsContainer.innerHTML = "";
+
+          reservations.forEach((reservation) => {
+            const annonce = reservation.annonceId;
+            const div = document.createElement("div");
+            div.className = "reservation";
+            div.innerHTML = `
+              <h3>${annonce.titre}</h3>
+              <p>${annonce.description}</p>
+              <p>${annonce.adresse}</p>
+              <p>${annonce.ville}</p>
+              <p class="prix">${annonce.prix}€</p>
+              <img src="${annonce.image}" alt="Image de l'annonce">
+              <p>Date de réservation: ${new Date(
+                reservation.dateReservation
+              ).toLocaleDateString()}</p>
+              <button class="delete-btn" data-id="${
+                reservation._id
+              }">Supprimer</button>
+            `;
+            reservationsContainer.appendChild(div);
+          });
+
+          // Add event listeners pour delete un buttons
+          const deleteButtons = document.querySelectorAll(".delete-btn");
+          deleteButtons.forEach((button) => {
+            button.addEventListener("click", async (event) => {
+              const reservationId = event.target.getAttribute("data-id");
+
+              try {
+                const deleteResponse = await fetch(
+                  `http://localhost:3000/api/reservations/${reservationId}`,
+                  {
+                    method: "DELETE",
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+
+                if (!deleteResponse.ok) {
+                  throw new Error(
+                    "Erreur lors de la suppression de la réservation"
+                  );
+                }
+
+                // Remove the reservation from the DOM
+                event.target.closest(".reservation").remove();
+              } catch (error) {
+                console.error(
+                  "Erreur lors de la suppression de la réservation:",
+                  error
+                );
+                alert("Impossible de supprimer la réservation.");
+              }
+            });
+          });
+        } catch (error) {
+          console.error(
+            "Erreur lors de la récupération des réservations:",
+            error
+          );
+          reservationsContainer.innerHTML =
+            "<p>Erreur lors de la récupération des réservations.</p>";
+        }
+      });
+    </script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>
